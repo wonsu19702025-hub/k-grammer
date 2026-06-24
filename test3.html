@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>3회차 형성평가 — 음운의 개념 + 자음·모음 체계</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#F5F6FA;color:#1a1a2e;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:2rem 1rem 4rem}
+.header{background:#fff;border-radius:16px;border:1px solid #E0E4EF;padding:1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(30,50,120,.07)}
+.header-top{display:flex;align-items:center;gap:12px;margin-bottom:.5rem}
+.badge{background:#E8EEFB;color:#2E4E8C;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.header h1{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+.header p{font-size:14px;color:#6b7280}
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.info-row input{width:100%;padding:8px 12px;font-size:14px;border:1px solid #D1D9F0;border-radius:8px;background:#F8FAFF;color:#1a1a2e;font-family:inherit}
+.info-row input:focus{outline:none;border-color:#2E4E8C;background:#fff}
+.section-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#2E4E8C;margin:1.8rem 0 .8rem;letter-spacing:.04em}
+.section-label::after{content:'';flex:1;height:1px;background:#D1D9F0}
+.q-card{background:#fff;border-radius:14px;border:1.5px solid #E0E4EF;padding:1.25rem;margin-bottom:.9rem;box-shadow:0 1px 4px rgba(30,50,120,.05);transition:border-color .3s,box-shadow .3s}
+.q-card.q-correct{border-color:#16A05A;box-shadow:0 2px 10px rgba(22,160,90,.12)}
+.q-card.q-wrong{border-color:#EF4444;box-shadow:0 2px 10px rgba(239,68,68,.12)}
+.q-card.q-manual{border-color:#F59E0B;box-shadow:0 2px 10px rgba(245,158,11,.10)}
+.q-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-num{background:#2E4E8C;color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+.q-pts{font-size:12px;color:#9ca3af;font-weight:500}
+.q-result-badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;display:none}
+.q-result-badge.ok{background:#ECFBF3;color:#0D6B3C;display:block}
+.q-result-badge.fail{background:#FEF2F2;color:#991B1B;display:block}
+.q-result-badge.manual{background:#FFF8E7;color:#92400E;display:block}
+.q-text{font-size:15px;color:#1a1a2e;line-height:1.7;margin-bottom:12px}
+.box{background:#F8FAFF;border:1px solid #D1D9F0;border-radius:10px;padding:.85rem 1rem;font-size:14px;color:#374151;margin-bottom:12px;line-height:1.8}
+.box strong{display:block;text-align:center;color:#2E4E8C;margin-bottom:6px;font-size:13px}
+.choices{display:flex;flex-direction:column;gap:7px}
+.choice-btn{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid #E0E4EF;border-radius:10px;cursor:pointer;background:#fff;font-size:14px;color:#1a1a2e;transition:all .18s;text-align:left;width:100%;font-family:inherit;line-height:1.6}
+.choice-btn:hover:not(:disabled){background:#F0F4FC;border-color:#A0B0D8}
+.choice-btn.selected{background:#D1FAE5;border-color:#059669;color:#065F46;font-weight:600;box-shadow:0 0 0 3px rgba(5,150,105,.15)}
+.choice-btn.result-correct{background:#ECFBF3;border-color:#16A05A;color:#0D6B3C;font-weight:600}
+.choice-btn.result-wrong{background:#FEF2F2;border-color:#EF4444;color:#991B1B;font-weight:600}
+.choice-btn.result-show{background:#ECFBF3;border-color:#16A05A;color:#0D6B3C;font-weight:600}
+.circle{width:26px;height:26px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.answer-panel{display:none;margin-top:14px;border-radius:10px;overflow:hidden;border:1px solid #E0E4EF}
+.answer-panel.visible{display:block}
+.ap-correct{background:#ECFBF3;border-color:#6ee7b7}
+.ap-wrong{background:#FEF2F2;border-color:#fca5a5}
+.ap-manual{background:#FFF8E7;border-color:#FCD34D}
+.ap-header{display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:13px;font-weight:700}
+.ap-correct .ap-header{color:#065F46}
+.ap-wrong .ap-header{color:#7F1D1D}
+.ap-manual .ap-header{color:#78350F}
+.ap-divider{height:1px;background:rgba(0,0,0,.08);margin:0 14px 10px}
+.ap-body{padding:0 14px 12px;font-size:13px;line-height:1.8}
+.ap-correct .ap-body{color:#065F46}
+.ap-wrong .ap-body{color:#7F1D1D}
+.ap-manual .ap-body{color:#78350F}
+.ap-answer{font-weight:700;margin-bottom:6px}
+.ap-inner{background:rgba(255,255,255,.55);border-radius:8px;padding:8px 10px;margin-top:6px}
+.short-input{width:100%;padding:9px 12px;font-size:14px;border:1.5px solid #D1D9F0;border-radius:8px;background:#F8FAFF;color:#1a1a2e;margin-top:8px;font-family:inherit;transition:border-color .15s}
+.short-input:focus{outline:none;border-color:#059669;background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+.short-input.input-ok{border-color:#16A05A;background:#ECFBF3}
+.short-input.input-fail{border-color:#EF4444;background:#FEF2F2}
+.essay-input{width:100%;padding:9px 12px;font-size:14px;border:1.5px solid #D1D9F0;border-radius:8px;background:#F8FAFF;color:#1a1a2e;resize:vertical;min-height:80px;font-family:inherit;line-height:1.6;transition:border-color .15s}
+.essay-input:focus{outline:none;border-color:#059669;background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.grid2 label{font-size:13px;color:#6b7280;margin-bottom:4px;display:block}
+.table-wrap{overflow-x:auto;margin:10px 0}
+table.t{border-collapse:collapse;width:100%;font-size:13px}
+table.t th,table.t td{border:1px solid #D1D9F0;padding:7px 10px;text-align:center;color:#1a1a2e}
+table.t th{background:#EEF2FB;font-weight:600;color:#2E4E8C}
+table.t td input{width:100%;padding:5px 8px;border:1px solid #D1D9F0;border-radius:6px;font-size:13px;font-family:inherit;background:#F8FAFF;transition:border-color .15s}
+table.t td input:focus{outline:none;border-color:#059669;background:#fff}
+table.t td input.input-ok{border-color:#16A05A;background:#ECFBF3}
+table.t td input.input-fail{border-color:#EF4444;background:#FEF2F2}
+.sub-q{margin-top:14px}
+.sub-q p{font-size:14px;color:#374151;margin-bottom:6px;font-weight:500}
+.submit-btn{display:block;width:100%;padding:14px;font-size:16px;font-weight:700;border:none;border-radius:12px;background:#2E4E8C;color:#fff;cursor:pointer;margin-top:1.5rem;font-family:inherit;transition:background .15s;letter-spacing:.02em}
+.submit-btn:hover:not(:disabled){background:#1a2e5a}
+.submit-btn:disabled{background:#9ca3af;cursor:not-allowed}
+
+/* 제출 상태 토스트 */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.2);z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.toast.sending{background:#2E4E8C}
+.toast.success{background:#16A05A}
+.toast.error{background:#EF4444}
+
+.score-bar{display:none;margin-top:1.5rem;background:#fff;border:1px solid #E0E4EF;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(30,50,120,.07)}
+.score-main{text-align:center;margin-bottom:1.2rem}
+.score-num{font-size:52px;font-weight:800;color:#2E4E8C}
+.score-total{font-size:15px;color:#6b7280;margin-bottom:4px}
+.score-msg{font-size:15px;font-weight:600;margin-top:8px}
+.progress-bg{background:#EEF2FB;border-radius:99px;height:12px;overflow:hidden;margin:10px 0}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#2E4E8C,#5B8DEF);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.note{font-size:12px;color:#9ca3af;text-align:center;margin-top:6px}
+.detail-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:1.2rem}
+.detail-item{text-align:center;background:#F8FAFF;border:1px solid #E0E4EF;border-radius:10px;padding:8px 4px;cursor:pointer;transition:background .15s}
+.detail-item:hover{background:#EEF2FB}
+.d-num{font-size:12px;color:#6b7280;margin-bottom:2px}
+.d-icon{font-size:20px;margin:2px 0}
+.d-pts{font-size:11px;color:#6b7280;font-weight:600}
+.score-hint{font-size:12px;color:#9ca3af;text-align:center;margin-top:8px}
+
+/* 구글 시트 전송 결과 박스 */
+.submit-result{display:none;margin-top:12px;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center}
+.submit-result.ok{background:#ECFBF3;color:#065F46;border:1px solid #6ee7b7}
+.submit-result.fail{background:#FEF2F2;color:#991B1B;border:1px solid #fca5a5}
+
+.retry-btn{display:none;width:100%;padding:11px;font-size:14px;font-weight:600;border:1px solid #D1D9F0;border-radius:10px;background:#F8FAFF;color:#4b5563;cursor:pointer;margin-top:10px;font-family:inherit;transition:background .15s}
+.retry-btn:hover{background:#EEF2FB;border-color:#A0B0D8}
+@media(max-width:500px){
+  .wrap{padding:1rem .75rem 3rem}
+  .grid2{grid-template-columns:1fr}
+  .detail-grid{gap:5px}
+  .detail-item{padding:6px 2px}
+  .score-num{font-size:40px}
+  table.t{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div class="header-top">
+    <span class="badge">3회차</span>
+    <span style="font-size:13px;color:#6b7280">2026 여름방학 방과후 수업</span>
+  </div>
+  <h1>형성평가 — 음운의 개념 + 자음·모음 체계</h1>
+  <p>고1 중간 난이도 &nbsp;|&nbsp; 총 100점 &nbsp;|&nbsp; 객관식 5문항 + 단답형 3문항 + 서술형 2문항</p>
+  <div class="info-row">
+    <input id="s-name" type="text" placeholder="이름을 입력하세요 (필수)"/>
+    <input id="s-date" type="date"/>
+  </div>
+</div>
+
+<div class="section-label">객관식 &nbsp; 1~5번 (각 10점)</div>
+
+<!-- 1번 -->
+<div class="q-card" id="card1">
+  <div class="q-head"><span class="q-num">1번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb1"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">다음 중 '음운'에 대한 설명으로 옳은 것은?</p>
+  <div class="choices" id="ch1">
+    <button class="choice-btn" data-q="1" data-ans="wrong" data-num="①"><span class="circle">①</span>음운은 혼자서도 발음할 수 있는 소리의 최소 단위이다.</button>
+    <button class="choice-btn" data-q="1" data-ans="wrong" data-num="②"><span class="circle">②</span>음운은 글자(문자)와 항상 1:1로 대응한다.</button>
+    <button class="choice-btn" data-q="1" data-ans="correct" data-num="③"><span class="circle">③</span>음운은 말의 뜻을 구별해 주는 가장 작은 소리 단위이다.</button>
+    <button class="choice-btn" data-q="1" data-ans="wrong" data-num="④"><span class="circle">④</span>음운은 자음과 모음만을 가리키며, 반모음은 포함하지 않는다.</button>
+    <button class="choice-btn" data-q="1" data-ans="wrong" data-num="⑤"><span class="circle">⑤</span>비분절 음운에는 장단, 강약이 있으며 현대 국어에서 모두 쓰인다.</button>
+  </div>
+  <div class="answer-panel" id="ap1"></div>
+</div>
+
+<!-- 2번 -->
+<div class="q-card" id="card2">
+  <div class="q-head"><span class="q-num">2번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb2"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">다음 단어 쌍 중 '최소 대립쌍'의 예로 적절하지 않은 것은?</p>
+  <div class="choices" id="ch2">
+    <button class="choice-btn" data-q="2" data-ans="wrong" data-num="①"><span class="circle">①</span>말 / 발</button>
+    <button class="choice-btn" data-q="2" data-ans="correct" data-num="②"><span class="circle">②</span>밥 / 국</button>
+    <button class="choice-btn" data-q="2" data-ans="wrong" data-num="③"><span class="circle">③</span>살 / 쌀</button>
+    <button class="choice-btn" data-q="2" data-ans="wrong" data-num="④"><span class="circle">④</span>눈(眼) / 눈(雪)</button>
+    <button class="choice-btn" data-q="2" data-ans="wrong" data-num="⑤"><span class="circle">⑤</span>불 / 뿔</button>
+  </div>
+  <div class="answer-panel" id="ap2"></div>
+</div>
+
+<!-- 3번 -->
+<div class="q-card" id="card3">
+  <div class="q-head"><span class="q-num">3번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb3"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">다음 중 자음의 특성에 대한 설명으로 옳은 것은?</p>
+  <div class="choices" id="ch3">
+    <button class="choice-btn" data-q="3" data-ans="wrong" data-num="①"><span class="circle">①</span>자음은 홀로 발음될 수 있어 단독으로 음절을 이룰 수 있다.</button>
+    <button class="choice-btn" data-q="3" data-ans="wrong" data-num="②"><span class="circle">②</span>자음은 발음할 때 공기의 흐름이 방해를 받지 않는다.</button>
+    <button class="choice-btn" data-q="3" data-ans="correct" data-num="③"><span class="circle">③</span>자음의 조음 방법에는 파열음, 마찰음, 파찰음, 비음, 유음이 있다.</button>
+    <button class="choice-btn" data-q="3" data-ans="wrong" data-num="④"><span class="circle">④</span>경구개음(센입천장소리)에는 ㄱ, ㅋ, ㄲ이 해당된다.</button>
+    <button class="choice-btn" data-q="3" data-ans="wrong" data-num="⑤"><span class="circle">⑤</span>유음(ㄹ)은 조음 방법상 비음에 포함된다.</button>
+  </div>
+  <div class="answer-panel" id="ap3"></div>
+</div>
+
+<!-- 4번 -->
+<div class="q-card" id="card4">
+  <div class="q-head"><span class="q-num">4번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb4"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">다음 단모음 중 '후설 원순 모음'에 해당하는 것만 모두 고른 것은?</p>
+  <div class="box">ㄱ. ㅏ &nbsp;&nbsp;&nbsp;&nbsp; ㄴ. ㅜ &nbsp;&nbsp;&nbsp;&nbsp; ㄷ. ㅗ &nbsp;&nbsp;&nbsp;&nbsp; ㄹ. ㅡ &nbsp;&nbsp;&nbsp;&nbsp; ㅁ. ㅟ</div>
+  <div class="choices" id="ch4">
+    <button class="choice-btn" data-q="4" data-ans="correct" data-num="①"><span class="circle">①</span>ㄴ, ㄷ</button>
+    <button class="choice-btn" data-q="4" data-ans="wrong" data-num="②"><span class="circle">②</span>ㄴ, ㄹ</button>
+    <button class="choice-btn" data-q="4" data-ans="wrong" data-num="③"><span class="circle">③</span>ㄷ, ㄹ</button>
+    <button class="choice-btn" data-q="4" data-ans="wrong" data-num="④"><span class="circle">④</span>ㄷ, ㅁ</button>
+    <button class="choice-btn" data-q="4" data-ans="wrong" data-num="⑤"><span class="circle">⑤</span>ㄴ, ㄷ, ㅁ</button>
+  </div>
+  <div class="answer-panel" id="ap4"></div>
+</div>
+
+<!-- 5번 -->
+<div class="q-card" id="card5">
+  <div class="q-head"><span class="q-num">5번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb5"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">〈보기〉의 ㉠~㉣에 대한 설명으로 옳지 <u>않은</u> 것은?</p>
+  <div class="box">
+    <strong>〈 보 기 〉</strong>
+    ㉠ 아, 야, 워 &nbsp;← 중성만으로 이루어진 음절<br>
+    ㉡ 노, 과, 파 &nbsp;← 초성 + 중성으로 이루어진 음절<br>
+    ㉢ 암, 올, 읍 &nbsp;← 중성 + 종성으로 이루어진 음절<br>
+    ㉣ 형, 복, 쌀 &nbsp;← 초성 + 중성 + 종성으로 이루어진 음절
+  </div>
+  <div class="choices" id="ch5">
+    <button class="choice-btn" data-q="5" data-ans="wrong" data-num="①"><span class="circle">①</span>㉠의 음절에서 중성에는 단모음 또는 이중 모음이 올 수 있다.</button>
+    <button class="choice-btn" data-q="5" data-ans="wrong" data-num="②"><span class="circle">②</span>㉡의 '파'에서 초성 'ㅍ'은 파열음이며 격음(거센소리)이다.</button>
+    <button class="choice-btn" data-q="5" data-ans="wrong" data-num="③"><span class="circle">③</span>㉢의 음절들은 초성이 없으므로, 반드시 초성이 있어야 한다는 것은 옳지 않다.</button>
+    <button class="choice-btn" data-q="5" data-ans="wrong" data-num="④"><span class="circle">④</span>㉣의 '쌀'에서 초성 'ㅆ'은 마찰음이며 경음(된소리)이다.</button>
+    <button class="choice-btn" data-q="5" data-ans="correct" data-num="⑤"><span class="circle">⑤</span>이중 모음만으로는 음절을 이룰 수 없다.</button>
+  </div>
+  <div class="answer-panel" id="ap5"></div>
+</div>
+
+<div class="section-label">단답형 &nbsp; 6~8번 (각 10점)</div>
+
+<!-- 6번 -->
+<div class="q-card" id="card6">
+  <div class="q-head"><span class="q-num">6번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb6"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">국어의 자음 19개 중, 조음 방법이 '비음'에 해당하는 자음 3개를 모두 쓰시오.</p>
+  <div class="box">비음은 공기를 코로 내보내면서 발음하는 자음입니다.</div>
+  <input class="short-input" id="a6" placeholder="예) ㄱ, ㄴ, ㄷ 형식으로 입력"/>
+  <div class="answer-panel" id="ap6"></div>
+</div>
+
+<!-- 7번 -->
+<div class="q-card" id="card7">
+  <div class="q-head"><span class="q-num">7번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb7"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">다음 단어의 음절 수와 음운(자음+모음)의 총 수를 각각 쓰시오.</p>
+  <div class="box" style="text-align:center;font-size:20px;font-weight:700;letter-spacing:.1em;padding:1rem">닭볶음탕</div>
+  <div class="grid2">
+    <div><label for="a7a">음절 수 (숫자만)</label><input class="short-input" id="a7a" placeholder="예) 3" style="margin-top:0"/></div>
+    <div><label for="a7b">음운의 총 수 (숫자만)</label><input class="short-input" id="a7b" placeholder="예) 9" style="margin-top:0"/></div>
+  </div>
+  <div class="answer-panel" id="ap7"></div>
+</div>
+
+<!-- 8번 -->
+<div class="q-card" id="card8">
+  <div class="q-head"><span class="q-num">8번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge" id="rb8"></span><span class="q-pts">10점</span></div></div>
+  <p class="q-text">다음 자음들을 조음 위치에 따라 분류하여 표를 완성하시오.</p>
+  <div class="box" style="text-align:center;font-size:16px;font-weight:600;letter-spacing:.12em">ㄴ &nbsp; ㅁ &nbsp; ㅋ &nbsp; ㅅ &nbsp; ㅇ &nbsp; ㄷ &nbsp; ㅂ &nbsp; ㅈ</div>
+  <div class="table-wrap">
+    <table class="t">
+      <tr><th style="width:45%">조음 위치</th><th>해당 자음 입력</th></tr>
+      <tr><td>양순음 (입술소리)</td><td><input id="a8a" placeholder="해당 자음을 입력하세요"/></td></tr>
+      <tr><td>치조음 (잇몸소리)</td><td><input id="a8b" placeholder="해당 자음을 입력하세요"/></td></tr>
+      <tr><td>경구개음 (센입천장소리)</td><td><input id="a8c" placeholder="해당 자음을 입력하세요"/></td></tr>
+      <tr><td>연구개음 (여린입천장소리)</td><td><input id="a8d" placeholder="해당 자음을 입력하세요"/></td></tr>
+    </table>
+  </div>
+  <div class="answer-panel" id="ap8"></div>
+</div>
+
+<div class="section-label">서술형 &nbsp; 9~10번 (각 15점 · 교사 채점)</div>
+
+<!-- 9번 -->
+<div class="q-card q-manual" id="card9">
+  <div class="q-head"><span class="q-num">9번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge manual" id="rb9" style="display:block">📝 교사 채점</span><span class="q-pts">15점</span></div></div>
+  <p class="q-text">자음 체계표를 참고하여 다음 물음에 답하시오.</p>
+  <div class="table-wrap">
+    <table class="t" style="font-size:12px">
+      <tr><th>조음 방법 \ 위치</th><th>양순음</th><th>치조음</th><th>경구개음</th><th>연구개음</th><th>후음</th></tr>
+      <tr><td>파열음 – 평음</td><td>ㅂ</td><td>ㄷ</td><td></td><td>ㄱ</td><td></td></tr>
+      <tr><td>파열음 – 경음</td><td>ㅃ</td><td>ㄸ</td><td></td><td>ㄲ</td><td></td></tr>
+      <tr><td>파열음 – 격음</td><td>ㅍ</td><td>ㅌ</td><td></td><td>ㅋ</td><td></td></tr>
+      <tr><td>파찰음</td><td></td><td></td><td>ㅈ &nbsp;ㅉ &nbsp;ㅊ</td><td></td><td></td></tr>
+      <tr><td>마찰음</td><td></td><td>ㅅ &nbsp;ㅆ</td><td></td><td></td><td>ㅎ</td></tr>
+      <tr><td>비음</td><td>ㅁ</td><td>ㄴ</td><td></td><td>ㅇ</td><td></td></tr>
+      <tr><td>유음</td><td></td><td>ㄹ</td><td></td><td></td><td></td></tr>
+    </table>
+  </div>
+  <div class="sub-q"><p>(1) 'ㅂ – ㅍ'처럼 같은 조음 위치에서 소리 나는 자음 쌍을 2개 더 쓰시오.</p><textarea class="essay-input" id="a9a" rows="2" placeholder="답을 입력하세요..."></textarea></div>
+  <div class="sub-q"><p>(2) 'ㅅ'과 'ㅆ'의 차이를 조음 방법의 관점에서 2문장 이내로 서술하시오.</p><textarea class="essay-input" id="a9b" rows="3" placeholder="답을 입력하세요..."></textarea></div>
+  <div class="answer-panel ap-manual visible" id="ap9">
+    <div class="ap-header">📝 답안을 작성한 후 제출하세요. 선생님이 채점합니다.</div>
+  </div>
+</div>
+
+<!-- 10번 -->
+<div class="q-card q-manual" id="card10">
+  <div class="q-head"><span class="q-num">10번</span><div style="display:flex;align-items:center;gap:8px"><span class="q-result-badge manual" id="rb10" style="display:block">📝 교사 채점</span><span class="q-pts">15점</span></div></div>
+  <p class="q-text">단모음 체계표를 참고하여 다음 물음에 답하시오.</p>
+  <div class="table-wrap">
+    <table class="t">
+      <tr><th>혀 위치 / 입술 모양</th><th>전설 평순</th><th>전설 원순</th><th>후설 평순</th><th>후설 원순</th></tr>
+      <tr><td>고모음</td><td>ㅣ</td><td>ㅟ</td><td>ㅡ</td><td>ㅜ</td></tr>
+      <tr><td>중모음</td><td>ㅔ</td><td>ㅚ</td><td>ㅓ</td><td>ㅗ</td></tr>
+      <tr><td>저모음</td><td>ㅐ</td><td></td><td>ㅏ</td><td></td></tr>
+    </table>
+  </div>
+  <div class="sub-q"><p>(1) 단모음과 이중 모음의 차이를 발음 방법의 관점에서 2문장 이내로 설명하시오.</p><textarea class="essay-input" id="a10a" rows="3" placeholder="답을 입력하세요..."></textarea></div>
+  <div class="sub-q"><p>(2) '반모음'이란 무엇인지 설명하고, 국어의 반모음을 모두 쓰시오.</p><textarea class="essay-input" id="a10b" rows="3" placeholder="답을 입력하세요..."></textarea></div>
+  <div class="answer-panel ap-manual visible" id="ap10">
+    <div class="ap-header">📝 답안을 작성한 후 제출하세요. 선생님이 채점합니다.</div>
+  </div>
+</div>
+
+<button class="submit-btn" id="submit-btn" onclick="submitAll()">✏️ 채점 및 제출하기</button>
+<div class="submit-result" id="submit-result"></div>
+
+<!-- 점수판 -->
+<div class="score-bar" id="scorebar">
+  <div class="score-main">
+    <div class="score-total">자동 채점 점수</div>
+    <div class="score-num" id="score-num">0</div>
+    <div class="score-total">/ 70점 (객관식 + 단답형)</div>
+    <div class="score-msg" id="score-msg"></div>
+  </div>
+  <div class="progress-bg"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <p class="note">서술형 9·10번(30점)은 선생님 채점 후 합산됩니다.</p>
+  <div class="detail-grid" id="detail-grid"></div>
+  <p class="score-hint">번호를 클릭하면 해당 문제로 이동합니다.</p>
+</div>
+<button class="retry-btn" id="retry-btn" onclick="retryAll()">🔄 다시 풀기</button>
+
+</div><!-- /wrap -->
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyJMY9PzA4Y0LaBeOOjqzGdUAa9KqxNCRsAISKaNh65kAmwFtqZ9HGWLc9V_8FCqAG-/exec';
+
+const userSel={1:null,2:null,3:null,4:null,5:null};
+let submitted=false;
+
+// 선택지 클릭
+document.querySelectorAll('.choice-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    if(submitted)return;
+    const q=this.dataset.q;
+    document.querySelectorAll('#ch'+q+' .choice-btn').forEach(b=>b.classList.remove('selected'));
+    this.classList.add('selected');
+    userSel[q]=this;
+  });
+});
+
+// 토스트
+function showToast(msg, type, duration=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),duration);
+}
+
+// 정답·해설 데이터
+const D={
+  1:{ans:'③',correct_text:'③ 음운은 말의 뜻을 구별해 주는 가장 작은 소리 단위이다.',
+    all_explain:{'①':'혼자서 발음할 수 있는 단위는 <strong>음절</strong>입니다.','②':'음운은 소리이고 글자는 표기입니다. 1:1 대응이 아닙니다.','③':'✔ 정답입니다.','④':'반모음(j, w)도 음운에 포함됩니다.','⑤':'현대 국어에서는 <strong>장단</strong>만 남아 있고, 강약·고저는 사라졌습니다.'}},
+  2:{ans:'②',correct_text:'② 밥 / 국 — ㅂ↔ㄱ, ㅏ↔ㅜ 두 음운이 달라 최소 대립쌍 아님',
+    all_explain:{'①':'말/발은 초성 하나만 달라 최소 대립쌍입니다.','②':'✔ 정답입니다. 두 음운이 달라 최소 대립쌍이 아닙니다.','③':'살/쌀은 초성 하나만 달라 최소 대립쌍입니다.','④':'눈(眼)/눈(雪)은 소리 길이(장단)만 달라 최소 대립쌍입니다.','⑤':'불/뿔은 초성 하나만 달라 최소 대립쌍입니다.'}},
+  3:{ans:'③',correct_text:'③ 조음 방법: 파열음·파찰음·마찰음·비음·유음',
+    all_explain:{'①':'자음은 단독으로 음절을 이룰 수 없습니다.','②':'자음은 공기 흐름이 <strong>방해를 받는</strong> 소리입니다.','③':'✔ 정답입니다.','④':'경구개음은 ㅈ·ㅉ·ㅊ입니다. ㄱ·ㅋ·ㄲ는 연구개음입니다.','⑤':'유음(ㄹ)은 비음과 별개의 범주입니다.'}},
+  4:{ans:'①',correct_text:'① ㄴ(ㅜ), ㄷ(ㅗ) — 둘 다 후설 원순 모음',
+    all_explain:{'①':'✔ 정답입니다. ㅜ(후설 고모음 원순), ㅗ(후설 중모음 원순)','②':'ㅡ는 후설 <strong>평순</strong> 모음입니다.','③':'ㅡ는 원순 모음이 아닙니다.','④':'ㅟ는 <strong>전설</strong> 원순 모음입니다.','⑤':'ㅟ는 전설 원순 모음이므로 포함되지 않습니다.'}},
+  5:{ans:'⑤',correct_text:'⑤ 이중 모음(야·워 등)도 음절을 이룰 수 있음 → 옳지 않은 설명',
+    all_explain:{'①':'중성에 단모음·이중 모음 모두 가능, 옳은 설명입니다.','②':'ㅍ은 양순 파열 격음, 옳은 설명입니다.','③':'초성 없이도 음절이 존재함을 보여주는 옳은 설명입니다.','④':'ㅆ은 치조 마찰 경음, 옳은 설명입니다.','⑤':'✔ 정답입니다. 이중 모음도 음절을 이룰 수 있습니다.'}}
+};
+
+function makeObjPanel(q,isOk,userBtn){
+  const d=D[q];
+  const panel=document.getElementById('ap'+q);
+  const card=document.getElementById('card'+q);
+  const rb=document.getElementById('rb'+q);
+  const chosen=userBtn?userBtn.dataset.num:'미선택';
+  card.classList.add(isOk?'q-correct':'q-wrong');
+  rb.textContent=isOk?'✅ 정답':'❌ 오답';
+  rb.className='q-result-badge '+(isOk?'ok':'fail');
+  let rows='';
+  Object.entries(d.all_explain).forEach(([num,txt])=>{
+    const isC=(num===d.ans), isCh=(num===chosen);
+    const bg=isC?'background:rgba(22,160,90,.1);border-left:3px solid #16A05A;'
+              :isCh&&!isOk?'background:rgba(239,68,68,.1);border-left:3px solid #EF4444;'
+              :'background:rgba(255,255,255,.5);';
+    rows+=`<div style="border-radius:7px;padding:7px 10px;margin-bottom:6px;font-size:13px;${bg}"><strong>${num}</strong> &nbsp;${txt}</div>`;
+  });
+  panel.className='answer-panel '+(isOk?'ap-correct':'ap-wrong')+' visible';
+  panel.innerHTML=`<div class="ap-header">${isOk?'✅ 정답입니다!':'❌ 오답입니다 (내가 선택: '+chosen+'번)'}</div>
+    <div class="ap-divider"></div>
+    <div class="ap-body">
+      <div class="ap-answer" style="margin-bottom:10px">▶ 정답: ${d.correct_text}</div>
+      <div style="font-size:12px;font-weight:700;opacity:.7;margin-bottom:6px">각 선택지 해설</div>${rows}
+    </div>`;
+}
+
+function makeShortPanel(q,isOk,correctText,explain){
+  const panel=document.getElementById('ap'+q);
+  const card=document.getElementById('card'+q);
+  const rb=document.getElementById('rb'+q);
+  card.classList.add(isOk?'q-correct':'q-wrong');
+  rb.textContent=isOk?'✅ 정답':'❌ 오답';
+  rb.className='q-result-badge '+(isOk?'ok':'fail');
+  panel.className='answer-panel '+(isOk?'ap-correct':'ap-wrong')+' visible';
+  panel.innerHTML=`<div class="ap-header">${isOk?'✅ 정답입니다!':'❌ 오답입니다'}</div>
+    <div class="ap-divider"></div>
+    <div class="ap-body">
+      <div class="ap-answer" style="margin-bottom:8px">▶ 정답: ${correctText}</div>
+      <div class="ap-inner">${explain}</div>
+    </div>`;
+}
+
+// 구글 시트 전송
+function sendToSheet(data){
+  showToast('📤 결과를 전송 중입니다...','sending',5000);
+  fetch(SHEET_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  })
+  .then(()=>{
+    showToast('✅ 결과가 선생님께 전송되었습니다!','success');
+    const sr=document.getElementById('submit-result');
+    sr.textContent='✅ 결과가 선생님 구글 시트에 성공적으로 전송되었습니다!';
+    sr.className='submit-result ok';
+    sr.style.display='block';
+  })
+  .catch(()=>{
+    showToast('⚠️ 전송 중 오류가 발생했습니다.','error');
+    const sr=document.getElementById('submit-result');
+    sr.textContent='⚠️ 전송에 실패했습니다. 인터넷 연결을 확인해 주세요.';
+    sr.className='submit-result fail';
+    sr.style.display='block';
+  });
+}
+
+function submitAll(){
+  if(submitted)return;
+  const name=document.getElementById('s-name').value.trim();
+  if(!name){
+    showToast('⚠️ 이름을 먼저 입력해 주세요!','error',2500);
+    document.getElementById('s-name').focus();
+    return;
+  }
+  submitted=true;
+  let total=0;
+  const detail=[];
+  const resultData={
+    name,
+    date:document.getElementById('s-date').value||'미입력'
+  };
+
+  // 객관식
+  for(let q=1;q<=5;q++){
+    const ub=userSel[q];
+    const isOk=ub&&ub.dataset.ans==='correct';
+    const pts=isOk?10:0; total+=pts;
+    const ch=document.getElementById('ch'+q);
+    ch.querySelectorAll('.choice-btn').forEach(b=>{
+      b.classList.remove('selected'); b.disabled=true;
+      if(b.dataset.ans==='correct') b.classList.add('result-show');
+      if(b===ub&&!isOk) b.classList.add('result-wrong');
+      if(b===ub&&isOk) b.classList.add('result-correct');
+    });
+    makeObjPanel(q,isOk,ub);
+    detail.push({q,pts,max:10,ok:isOk});
+    resultData['q'+q]=ub?(ub.dataset.num+(isOk?' ✅':' ❌')):'미선택';
+  }
+
+  // 6번
+  const v6=(document.getElementById('a6').value||'').replace(/\s/g,'');
+  const ok6=v6.includes('ㅁ')&&v6.includes('ㄴ')&&v6.includes('ㅇ');
+  document.getElementById('a6').classList.add(ok6?'input-ok':'input-fail');
+  makeShortPanel(6,ok6,'비음: ㅁ(양순음) · ㄴ(치조음) · ㅇ(연구개음) — 3개',
+    '비음은 발음할 때 공기가 코를 통해 나오는 자음입니다.<br>조음 위치별로 ㅁ(입술), ㄴ(잇몸), ㅇ(여린입천장) 세 가지가 있습니다.');
+  total+=ok6?10:0; detail.push({q:6,pts:ok6?10:0,max:10,ok:ok6});
+  resultData.q6=(document.getElementById('a6').value||'미입력')+(ok6?' ✅':' ❌');
+
+  // 7번
+  const a7a=(document.getElementById('a7a').value||'').trim();
+  const a7b=(document.getElementById('a7b').value||'').trim();
+  const ok7a=a7a==='4',ok7b=a7b==='11',ok7=ok7a&&ok7b;
+  document.getElementById('a7a').classList.add(ok7a?'input-ok':'input-fail');
+  document.getElementById('a7b').classList.add(ok7b?'input-ok':'input-fail');
+  makeShortPanel(7,ok7,'음절 수: 4음절 / 음운 총 수: 11개 (자음 7개 + 모음 4개)',
+    '닭(ㄷ+ㅏ+ㄱ)·볶(ㅂ+ㅗ+ㄲ)·음(ㅇ+ㅡ+ㅁ)·탕(ㅌ+ㅏ+ㅇ) → 4음절<br>자음 7개 + 모음 4개 = <strong>11개</strong>');
+  total+=ok7?10:0; detail.push({q:7,pts:ok7?10:0,max:10,ok:ok7});
+  resultData.q7='음절:'+a7a+'/음운:'+a7b+(ok7?' ✅':' ❌');
+
+  // 8번
+  const a8a=(document.getElementById('a8a').value||'').replace(/\s/g,'');
+  const a8b=(document.getElementById('a8b').value||'').replace(/\s/g,'');
+  const a8c=(document.getElementById('a8c').value||'').replace(/\s/g,'');
+  const a8d=(document.getElementById('a8d').value||'').replace(/\s/g,'');
+  const ok8a=a8a.includes('ㅁ')&&a8a.includes('ㅂ');
+  const ok8b=a8b.includes('ㄴ')&&a8b.includes('ㄷ')&&a8b.includes('ㅅ');
+  const ok8c=a8c.includes('ㅈ');
+  const ok8d=a8d.includes('ㅋ')&&a8d.includes('ㅇ');
+  const ok8=ok8a&&ok8b&&ok8c&&ok8d;
+  ['a8a','a8b','a8c','a8d'].forEach((id,i)=>{
+    document.getElementById(id).classList.add([ok8a,ok8b,ok8c,ok8d][i]?'input-ok':'input-fail');
+  });
+  makeShortPanel(8,ok8,'양순음:ㅁ,ㅂ / 치조음:ㄴ,ㄷ,ㅅ / 경구개음:ㅈ / 연구개음:ㅋ,ㅇ',
+    '<strong>양순음</strong>:ㅁ·ㅂ &nbsp;|&nbsp; <strong>치조음</strong>:ㄴ·ㄷ·ㅅ &nbsp;|&nbsp; <strong>경구개음</strong>:ㅈ &nbsp;|&nbsp; <strong>연구개음</strong>:ㅋ·ㅇ');
+  total+=ok8?10:0; detail.push({q:8,pts:ok8?10:0,max:10,ok:ok8});
+  resultData.q8='양순:'+a8a+'/치조:'+a8b+'/경구개:'+a8c+'/연구개:'+a8d+(ok8?' ✅':' ❌');
+
+  // 서술형 답안
+  resultData.q9=(document.getElementById('a9a').value||'')+'  /  '+(document.getElementById('a9b').value||'');
+  resultData.q10a=document.getElementById('a10a').value||'';
+  resultData.q10b=document.getElementById('a10b').value||'';
+  resultData.total=total;
+
+  // 점수판
+  const pct=Math.round(total/70*100);
+  const msgs=[{t:'다시 도전해 봐요 💪',c:'#991B1B'},{t:'조금 더 공부해 봐요 📖',c:'#92400E'},{t:'잘 했어요! 😊',c:'#065F46'},{t:'훌륭합니다! 🎉',c:'#1e3a5f'},{t:'완벽해요! 🏆',c:'#1e3a5f'}];
+  const mi=pct<50?0:pct<70?1:pct<85?2:pct<95?3:4;
+  document.getElementById('score-num').textContent=total;
+  const sm=document.getElementById('score-msg');
+  sm.textContent=msgs[mi].t+' ('+pct+'%)'; sm.style.color=msgs[mi].c;
+  setTimeout(()=>{document.getElementById('prog-fill').style.width=pct+'%';},100);
+  const dg=document.getElementById('detail-grid');
+  dg.innerHTML=detail.map(d=>`<div class="detail-item" onclick="document.getElementById('card${d.q}').scrollIntoView({behavior:'smooth',block:'center'})"><div class="d-num">${d.q}번</div><div class="d-icon">${d.ok?'✅':'❌'}</div><div class="d-pts">${d.pts}/${d.max}점</div></div>`).join('')
+    +`<div class="detail-item" onclick="document.getElementById('card9').scrollIntoView({behavior:'smooth',block:'center'})"><div class="d-num">9번</div><div class="d-icon">📝</div><div class="d-pts">채점중</div></div>
+      <div class="detail-item" onclick="document.getElementById('card10').scrollIntoView({behavior:'smooth',block:'center'})"><div class="d-num">10번</div><div class="d-icon">📝</div><div class="d-pts">채점중</div></div>`;
+  document.getElementById('scorebar').style.display='block';
+  document.getElementById('retry-btn').style.display='block';
+  document.getElementById('submit-btn').disabled=true;
+  setTimeout(()=>document.getElementById('scorebar').scrollIntoView({behavior:'smooth',block:'start'}),200);
+
+  // 구글 시트 전송
+  sendToSheet(resultData);
+}
+
+function retryAll(){
+  submitted=false;
+  for(let q=1;q<=5;q++){
+    userSel[q]=null;
+    document.querySelectorAll('#ch'+q+' .choice-btn').forEach(b=>{b.classList.remove('selected','result-correct','result-wrong','result-show');b.disabled=false;});
+    const ap=document.getElementById('ap'+q); ap.className='answer-panel'; ap.innerHTML='';
+    document.getElementById('card'+q).className='q-card';
+    const rb=document.getElementById('rb'+q); rb.className='q-result-badge'; rb.textContent=''; rb.style.display='none';
+  }
+  ['a6','a7a','a7b','a8a','a8b','a8c','a8d','a9a','a9b','a10a','a10b'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.value='';el.classList.remove('input-ok','input-fail');}
+  });
+  [6,7,8].forEach(q=>{
+    const ap=document.getElementById('ap'+q); ap.className='answer-panel'; ap.innerHTML='';
+    document.getElementById('card'+q).className='q-card';
+    const rb=document.getElementById('rb'+q); rb.className='q-result-badge'; rb.textContent=''; rb.style.display='none';
+  });
+  document.getElementById('scorebar').style.display='none';
+  document.getElementById('retry-btn').style.display='none';
+  document.getElementById('submit-btn').disabled=false;
+  document.getElementById('prog-fill').style.width='0%';
+  document.getElementById('submit-result').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
