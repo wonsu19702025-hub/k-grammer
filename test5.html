@@ -267,7 +267,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const SHEET_URL='https://script.google.com/macros/s/AKfycbxLGPOaInN4tW0f1vjzM6Wg2QGVVUvNLFA4tWcNLqMaaIYWbcBM52IDSp0xIttIJFV7/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbyrOFtVuWP--ZFWnZLFxEdRM3tlzMUpEEnJiJz4eFy4FPT9V5P1bT-hGO94yXUt-N9V/exec';
 const userSel={1:null,2:null,3:null,4:null,5:null};
 let submitted=false;
 document.querySelectorAll('.choice-btn').forEach(btn=>{btn.addEventListener('click',function(){if(submitted)return;const q=this.dataset.q;document.querySelectorAll('#ch'+q+' .choice-btn').forEach(b=>b.classList.remove('selected'));this.classList.add('selected');userSel[q]=this;});});
@@ -292,7 +292,7 @@ function submitAll(){
   const name=document.getElementById('s-name').value.trim();
   if(!name){showToast('⚠️ 이름을 먼저 입력해 주세요!','error',2500);document.getElementById('s-name').focus();return;}
   submitted=true;let total=0;const detail=[];
-  const resultData={name,date:document.getElementById('s-date').value||'미입력',회차:'5회차-외래어로마자'};
+  const resultData={name,date:document.getElementById('s-date').value||'미입력',round:'Round05'};
   for(let q=1;q<=5;q++){const ub=userSel[q];const isOk=ub&&ub.dataset.ans==='correct';const pts=isOk?10:0;total+=pts;document.querySelectorAll('#ch'+q+' .choice-btn').forEach(b=>{b.classList.remove('selected');b.disabled=true;if(b.dataset.ans==='correct')b.classList.add('result-show');if(b===ub&&!isOk)b.classList.add('result-wrong');if(b===ub&&isOk)b.classList.add('result-correct');});makeObjPanel(q,isOk,ub);detail.push({q,pts,max:10,ok:isOk});resultData['q'+q]=ub?(ub.dataset.num+(isOk?' ✅':' ❌')):'미선택';}
   const a6a=(document.getElementById('a6a').value||'').replace(/\s/g,'');
   const a6b=(document.getElementById('a6b').value||'').replace(/\s/g,'');
